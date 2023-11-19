@@ -13,9 +13,9 @@ Paginação infinita com Paging 3;<br />
 Caching local dos heróis favoritos utilizando ROOM;<br />
 Navigation;<br />
 Testes Unitários;<br />
-Testes de UI;<br />
 
 # Future Features
+Testes de UI;<br />
 Caching local da lista de heróis para o conceito de offiline first;<br />
 modularização
 
