@@ -1,0 +1,34 @@
+package com.example.appmarvels.framework.local
+
+import com.example.appmarvels.framework.db.dao.FavoriteDao
+import com.example.appmarvels.framework.db.entity.FavoriteEntity
+import com.example.appmarvels.framework.db.entity.toCharactersModel
+import com.example.appmarvels.framework.model.Character
+import com.example.appmarvels.framework.repository.FavoritesLocalDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+
+class RoomFavoritesDataSource @Inject constructor(
+    private val favoriteDao: FavoriteDao
+) : FavoritesLocalDataSource {
+    override fun getAll(): Flow<List<Character>> {
+        return favoriteDao.loadFavorites().map {
+            it.toCharactersModel()
+        }
+    }
+
+    override suspend fun isFavorite(characterId: Int): Boolean {
+        return favoriteDao.hasFavorite(characterId) != null
+    }
+
+    override suspend fun save(character: Character) {
+        favoriteDao.insertFavorite(character.toFavoriteEntity())
+    }
+
+    override suspend fun delete(character: Character) {
+        favoriteDao.deleteFavorite(character.toFavoriteEntity())
+    }
+
+    private fun Character.toFavoriteEntity() = FavoriteEntity(id, name, imageUrl)
+}
