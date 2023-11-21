@@ -23,7 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
-class FavoritesViewModelTest{
+class FavoritesViewModelTest {
 
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
@@ -43,8 +43,11 @@ class FavoritesViewModelTest{
 
     @Before
     fun setup() {
-        favoritesViewModel = FavoritesViewModel(getFavoritesUseCase).apply {
-            uiState.observeForever(uiStateObserver)
+        favoritesViewModel = FavoritesViewModel(
+            getFavoritesUseCase,
+            mainCoroutineRule.testDispatcherProvider
+        ).apply {
+            state.observeForever(uiStateObserver)
         }
     }
 
@@ -60,7 +63,7 @@ class FavoritesViewModelTest{
                 )
 
             // Action
-            favoritesViewModel.getFavorites()
+            favoritesViewModel.getAll()
 
             // Assert
             verify(uiStateObserver).onChanged(
@@ -76,7 +79,7 @@ class FavoritesViewModelTest{
                 .thenReturn(flowOf(characters))
 
             // Action
-            favoritesViewModel.getFavorites()
+            favoritesViewModel.getAll()
 
             // Assert
             TestCase.assertEquals(1, characters.size)

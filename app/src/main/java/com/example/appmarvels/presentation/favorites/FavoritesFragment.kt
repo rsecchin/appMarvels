@@ -45,7 +45,7 @@ class FavoritesFragment : Fragment() {
 
         initFavoritesAdapter()
 
-        viewModel.uiState.observe(viewLifecycleOwner) { uiState ->
+        viewModel.state.observe(viewLifecycleOwner) { uiState ->
             binding.flipperFavorites.displayedChild = when (uiState) {
 
                 is FavoritesViewModel.UiState.ShowFavorites -> {
@@ -57,10 +57,9 @@ class FavoritesFragment : Fragment() {
                     FLIPPER_CHILD_EMPTY
                 }
             }
-
         }
 
-        viewModel.getFavorites()
+        viewModel.getAll()
     }
 
     private fun initFavoritesAdapter() {
