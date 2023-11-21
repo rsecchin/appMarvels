@@ -22,3 +22,8 @@ Modularização
 
 # Build
 Clonar o projeto;<br />
+Criar um arquivo com o nome **apikey.properties** na pasta raiz do projeto ;<br />
+Adicionar as seguintes constantes:<br /><br />
+PUBLIC_KEY="examplePublicKey"<br />
+PRIVATE_KEY="examplePrivateKey" <br />
+Colocar os valores das chaves da sua conta Marvel
