@@ -8,6 +8,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs")
+    id ("io.gitlab.arturbosch.detekt")
 }
 
 val apikeyPropertiesFile = rootProject.file("apikey.properties")
@@ -58,11 +59,12 @@ android {
 dependencies {
 
     // AndroidX
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
+    val coroutines_version = "1.6.2"
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version")
 
     // Material design
     implementation("com.google.android.material:material:1.9.0")
@@ -100,8 +102,9 @@ dependencies {
     implementation ("androidx.paging:paging-runtime-ktx:$paging_version")
 
     // Dagger Hilt
-    implementation("com.google.dagger:hilt-android:2.42")
-    kapt("com.google.dagger:hilt-android-compiler:2.42")
+    val hilt_version = "2.42"
+    implementation("com.google.dagger:hilt-android:$hilt_version")
+    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
 
     // Room
     val room_version = "2.4.2"
@@ -111,24 +114,70 @@ dependencies {
 
     // Glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")
-    //kapt ("com.github.bumptech.glide:compiler:4.13.2")
+    kapt ("com.github.bumptech.glide:compiler:4.13.2")
 
     // Other Libs
     implementation ("com.facebook.shimmer:shimmer:0.5.0")
 
-    // For instrumented tests
-    androidTestImplementation ("com.google.dagger:hilt-android-testing:2.42")
-    kaptAndroidTest ("com.google.dagger:hilt-android-compiler:2.42")
+    testImplementation ("junit:junit:4.13.2")
 
-    testImplementation("junit:junit:4.13.2")
+    implementation ("junit:junit:4.13.2")
     implementation ("androidx.arch.core:core-testing:2.1.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.2")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1")
     implementation ("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+
+    // Instrumentation tests
+    val espresso_version = "3.4.0"
+    androidTestImplementation ("androidx.test.ext:junit:1.1.3")
+
+    androidTestImplementation ("androidx.test:runner:1.4.0")
+    androidTestUtil ("androidx.test:orchestrator:1.4.1")
+
+    androidTestImplementation ("androidx.test.espresso:espresso-core:$espresso_version")
+    androidTestImplementation ("androidx.test.espresso:espresso-contrib:$espresso_version")
+
+    val fragment_version = "1.6.0-alpha03"
+    implementation ("androidx.fragment:fragment-ktx:1.4.1")
+    debugImplementation ("androidx.fragment:fragment-testing:1.4.1")
+
+    implementation ("androidx.test.espresso:espresso-idling-resource:3.5.1")
+
+
+    // For instrumented tests
+    androidTestImplementation ("com.google.dagger:hilt-android-testing:$hilt_version")
+    kaptAndroidTest ("com.google.dagger:hilt-android-compiler:$hilt_version")
+
+    androidTestImplementation ("com.squareup.okhttp3:mockwebserver:4.9.3")
+
+    androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
 }
 
 // Allow references to generated code
 kapt {
     correctErrorTypes = true
+}
+
+project.afterEvaluate {
+    tasks.named("preBuild") {
+        dependsOn("detekt")
+    }
+}
+
+detekt {
+    toolVersion = "1.23.3"
+    val inputDirFiles =
+    rootProject.subprojects.map { module ->
+        "$module.projectDir/src/main/java"
+    }
+    source.setFrom(files(inputDirFiles))
+    config.setFrom(file("$rootDir/config/detekt/detekt.yml"))
+    autoCorrect = true
+
+    tasks.named("detekt").configure {
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+            txt.required.set(true)
+        }
+    }
 }
