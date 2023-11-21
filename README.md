@@ -8,16 +8,17 @@ Flow;<br />
 LiveData;<br />
 Retrofit;<br />
 OkHttp;<br />
+Detekt(análise de código);<br />
 Conceito de actions e states no viewModel;<br />
 Paginação infinita com Paging 3;<br />
 Caching local dos heróis favoritos utilizando ROOM;<br />
 Navigation;<br />
 Testes Unitários;<br />
-Testes de UI;<br />
 
 # Future Features
+Testes de UI;<br />
 Caching local da lista de heróis para o conceito de offiline first;<br />
-modularização
+Modularização
 
 # Build
 Clonar o projeto;<br />
